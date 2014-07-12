@@ -1,0 +1,1 @@
+var firebaseURL = function() { return 'https://burning-fire-3352.firebaseio.com/' };
