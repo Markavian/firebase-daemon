@@ -43,11 +43,16 @@ module.exports = function(grunt) {
   
   // Running the app
   grunt.registerTask('server', 'Start application as web server', function() {
+	
+	var server_port = process.env.FIREBASEDAEMON_NODEJS_PORT || 3000;
+    var server_ip_address = process.env.FIREBASEDAEMON_NODEJS_IP || '';
+	  
 	var done = this.async();
 	
-	require('./bin/daemon.min.js').listen(3000);
+	require('./bin/daemon.min.js').listen(server_port, server_ip_address, function() {
+		grunt.log.write('Server started on http://' + server_ip_address + ':' + server_port + ' /, end this process to stop.\n');
+	});
 	
-	grunt.log.write('Server started on http://localhost:3000/, end this process to stop.\n');
   });
 
   // Default tasks.
