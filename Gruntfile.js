@@ -47,7 +47,7 @@ module.exports = function(grunt) {
 	
 	require('./bin/daemon.min.js').listen(3000);
 	
-	grunt.log.write('Server started on http://localhost:3000/, end this process to stop.');
+	grunt.log.write('Server started on http://localhost:3000/, end this process to stop.\n');
   });
 
   // Default tasks.
