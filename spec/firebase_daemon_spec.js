@@ -9,7 +9,7 @@ describe("Firebase Daemon", function() {
 		daemon = new FirebaseDaemon(firebase);
 	});
 
-	describe("construtor()", function() {
+	describe("constructor()", function() {
 		it("should be initialised with the expected values", function() {
 			expect(daemon.updates).toEqual(0);
 		});
