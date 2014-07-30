@@ -66,7 +66,7 @@ describe("Firebase Daemon", function() {
 		});
 	});
 
-	describe("listen()", function() {
+	describe("listenOnQueue()", function() {
 		var mockChild = { "on": jasmine.createSpy('child.on') };
 		var expectedPath = 'path/to/listen-on/'
 		
@@ -82,54 +82,23 @@ describe("Firebase Daemon", function() {
 		});
 	});
 
-	describe("handleResponse()", function() {
-		var snapshotStructure = {
-			"some": {
-				"data": {
-					"structure": {
-						"values": [
-							"beacon1",
-							"beacon2",
-							"beacon3"
-						]
-					}
-				}
-			}
-		};
-		var mockSnapshot = {"val": jasmine.createSpy('snapshot.val').and.returnValue(snapshotStructure)};
-		var mockTargetChildren = {"target/data/structure/beacon1": true, "target/data/structure/beacon2": true};
-		var mockTarget = {
-			"hasChild": function(path) { 
-				return mockTargetChildren[path];
-			}
-		};
-		
-		beforeEach(function() {
-			spyOn(daemon, 'writeResponse');
-			spyOn(daemon, 'listConfigs').and.callThrough();
-			spyOn(mockTarget, 'hasChild').and.callThrough();
-			daemon.handleResponse(mockSnapshot);
-		});
-	
-		it("should test values in path based against configurations", function() {
-			expect(mockSnapshot.val).toHaveBeenCalled();
-			expect(daemon.listConfigs).toHaveBeenCalled();
-			
-			expect(mockTarget.hasChild).toHaveBeenCalledWith("target/data/structure/beacon1");
-			expect(mockTarget.hasChild).toHaveBeenCalledWith("target/data/structure/beacon2");
-			expect(mockTarget.hasChild).toHaveBeenCalledWith("target/data/structure/beacon3");
+	describe("iterateOverList()", function() {
+		it("read a list of entries from firebase", function() {
 			pending();
 		});
-	
-		it("should write missing values to configuration target", function() {
-			expect(daemon.writeResponse).toHaveBeenCalledWith('path/to/write/to/', 'beacon3');
+		
+		it("build a list of targets to write to", function() {
 			pending();
 		});
 	});
-	
-	describe("writeResponse()", function() {
+
+	describe("writeEntries()", function() {
 		beforeEach(function() {
 			daemon.writeResponse("x", "y");
+		});
+		
+		it("write to each target", function() {
+			pending();
 		});
 		
 		it("should increment the updates counter for each written response", function() {
@@ -140,7 +109,9 @@ describe("Firebase Daemon", function() {
 			}
 			expect(daemon.updates).toEqual(11);
 		});
-		
+	});
+
+	describe("updateQueue()", function() {
 		it("should write data to the firebase instance", function() {
 			pending();
 		});
