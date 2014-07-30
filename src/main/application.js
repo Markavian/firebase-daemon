@@ -31,7 +31,7 @@ var Application = (function() {
 
 	var path = self.url.parse(req.url).pathname;
 
-	var route = routes[path];
+	var route = self.routes[path];
 	if(route) {
 	  route(req, res);
 	}
