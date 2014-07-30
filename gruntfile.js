@@ -11,11 +11,11 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 	
-    "uglify": {
+    "uglify" : {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
-      "build daemon": {
+      "build daemon" : {
         files: {
           'bin/daemon.min.js': ['src/**/*.js']
         }
@@ -35,8 +35,8 @@ module.exports = function(grunt) {
           keepRunner: true,
           outfile: 'bin/SpecRunner.html'
         }
-	    }
 	  }
+	}
   });
 
   /* Harness to run the app as a node.js server */

@@ -1,11 +1,15 @@
 var FirebaseDaemon = (function() {
 	
-	var Class = function (firebase) {
+	var Class = function () {
+		this.init.apply(this, arguments);
+	};
+	
+	Class.prototype.init = function(firebase) {
 		this.firebase = firebase;
 		this.updates = 0;
 		
 		this._configs = [];
-	};
+	}
 	
 	Class.prototype.errors = {
 		"A" : "Invalid config: no path set",

@@ -1,37 +1,43 @@
 var Application = (function() {
+  
   var self;
   
   var Class = function () {
     self = this;
     self.hits = 0;
     self.log = [];
+	self.routes = {};
+	self.url = null;
+	self.daemon = null;
   }
   
   Class.prototype.init = function (http, url) {
     self.log.push('Server started ' + new Date());
-    self.createRoutes(http, url);
-    self.pollFirebase();
+	self.url = url;
+    self.registerDefaultRoutes(http);
+    self.createDaemon();
   }
   
-  Class.prototype.createRoutes = function (http, url) {
-    self.server = http.createServer(function (req, res) {
-      self.hits++;
-      self.log.push('Service status hit ' + self.hits + ' times, last from ' + req.url);
+  Class.prototype.registerDefaultRoutes = function (http) {
+	self.routes['/'] = self.responseMain;
+	self.routes['/favicon.png'] = self.response404;
+	
+    self.server = http.createServer(self.handleRequest);
+  }
+  
+  Class.prototype.handleRequest = function (req, res) {
+	self.hits++;
+	self.log.push('Service status hit ' + self.hits + ' times, last from ' + req.url);
 
-      var path = url.parse(req.url).pathname;
-      var routes = {
-        '/': self.responseMain,
-        '/favicon.png': self.response404
-      }
+	var path = self.url.parse(req.url).pathname;
 
-      var route = routes[path];
-      if(route) {
-        route(req, res);
-      }
-      else {
-        self.response404(req, res);
-      }
-    });
+	var route = routes[path];
+	if(route) {
+	  route(req, res);
+	}
+	else {
+	  self.response404(req, res);
+	}
   }
 
   Class.prototype.responseMain = function (req, res) {
@@ -46,9 +52,9 @@ var Application = (function() {
     res.end();
   }
 
-  Class.prototype.pollFirebase = function () {
-    self.log.push('Polling firebase ' + self.hits);
-    setTimeout(self.pollFirebase, 1500);
+  Class.prototype.createDaemon = function () {
+    self.log.push('Creating firebase daemon ' + self.hits);
+    self.daemon = new FirebaseDaemon();
   }
   
   return Class;
