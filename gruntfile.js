@@ -43,8 +43,9 @@ module.exports = function(grunt) {
   grunt.registerTask('server', 'Start application as web server', function() {
 	
     /* Environment variables */
-	  var server_port = process.env.FIREBASEDAEMON_NODEJS_PORT || 3000;
+	var server_port = process.env.FIREBASEDAEMON_NODEJS_PORT || 3000;
     var server_ip_address = process.env.FIREBASEDAEMON_NODEJS_IP || '';
+	var firebase_root = process.env.FIREBASEDAEMON_FIREBASE_ROOT || 'https://burning-fire-3352.firebaseio.com/';
     
     /* External require dependencies */
     var http = require('http');
@@ -54,7 +55,8 @@ module.exports = function(grunt) {
     var thread = this.async();
     
     /* Create and run the application */
-    var application = new (require('./bin/daemon.min.js'));
+	var exports = require('./bin/daemon.min.js');
+    var application = new exports.Application();
     application.init(http, url);
     application.server.listen(server_port, server_ip_address, function() {
       
@@ -64,7 +66,7 @@ module.exports = function(grunt) {
       grunt.log.write('Server started on ' + server_url + ', end this process to stop.\n');
 
       /* Kill the server process after a period of time */
-	  if(grunt.option("debug")) {
+	  if(grunt.option("development")) {
 		  grunt.log.write("Server in debug mode, will automatically shut down in 30 seconds.\n")
 		  setTimeout(function(end) {
 			grunt.log.write("Server thread stopping.");
@@ -73,7 +75,11 @@ module.exports = function(grunt) {
 	  };
       
 	});
-	  
+	
+	/* Attach daemons to application */
+	var daemon = new exports.FirebaseDaemon(firebase_root);
+	daemon.logTo(application.log);
+	
   });
 
   /* Default tasks */

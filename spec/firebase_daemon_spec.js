@@ -2,11 +2,13 @@ describe("Firebase Daemon", function() {
 
 	var firebase;
 	var daemon;
+	var logger;
 	
 	beforeEach(function() {
 		var url = firebaseURL();
 		firebase = new Firebase(url);
 		daemon = new FirebaseDaemon(firebase);
+		logger = jasmine.createSpy("example.logger");
 	});
 
 	describe("constructor()", function() {
@@ -73,6 +75,7 @@ describe("Firebase Daemon", function() {
 		beforeEach(function() {
 			spyOn(firebase, 'child').and.returnValue(mockChild);
 			
+			daemon.logTo(logger);
 			daemon.listen(expectedPath);
 		});
 	
@@ -80,9 +83,33 @@ describe("Firebase Daemon", function() {
 			expect(firebase.child).toHaveBeenCalledWith(expectedPath);
 			expect(mockChild.on).toHaveBeenCalledWith('value', daemon.handleResponse);
 		});
+	
+		it("should log a message", function() {
+			expect(logger).toHaveBeenCalledWith("Listening on path: " + expectedPath);
+		});
 	});
 
-	describe("iterateOverList()", function() {
+	describe("handleResponse()", function() {
+		
+		var mockSnapshot = {
+			val: function() {
+				return [
+					'some.stuff',
+					'more.stuff',
+					'lots.of.it'
+				]
+			}
+		};
+		
+		beforeEach(function() {
+			daemon.logTo(logger);
+			daemon.handleResponse(mockSnapshot);
+		});
+	
+		it("should log a message about the size of the queue", function() {
+			expect(logger).toHaveBeenCalledWith("Queue size: " + mockSnapshot.val().length);
+		});
+		
 		it("read a list of entries from firebase", function() {
 			pending();
 		});
@@ -114,6 +141,23 @@ describe("Firebase Daemon", function() {
 	describe("updateQueue()", function() {
 		it("should write data to the firebase instance", function() {
 			pending();
+		});
+	});
+	
+	describe("logTo()", function() {
+		
+		var unexpectedMessage = "too.soon";
+		var expectedMessage = "right.on.time";
+		
+		beforeEach(function() {
+			daemon.log(unexpectedMessage);
+			daemon.logTo(logger);
+			daemon.log(expectedMessage);
+		});
+		
+		it("should log messages if supplied a log function", function() {
+			expect(logger).not.toHaveBeenCalledWith(unexpectedMessage);
+			expect(logger).toHaveBeenCalledWith(expectedMessage);
 		});
 	});
   

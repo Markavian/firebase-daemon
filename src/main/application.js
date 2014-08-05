@@ -70,4 +70,5 @@ var Application = (function() {
   return Class;
 })();
 
-module.exports = Application;
+if(!module.exports) module.exports = {};
+module.exports.Application = Application;

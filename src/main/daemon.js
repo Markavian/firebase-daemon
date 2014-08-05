@@ -37,11 +37,14 @@ var FirebaseDaemon = (function() {
 	
 	Class.prototype.listen = function(path) {
 		this.firebase.child(path).on('value', this.handleResponse);
+		this.log("Listening on path: " + path);
 	};
 	
 	Class.prototype.handleResponse = function(snapshot) {
-		// TODO: Monitor specific value for changes
-		var values = snapshot.val();
+		// TODO: Read instructions from queue
+		var queue = snapshot.val();
+		
+		this.log("Queue size: " + queue.length);
 		
 		var configs = this.listConfigs();
 		
@@ -53,7 +56,19 @@ var FirebaseDaemon = (function() {
 		this.updates++;
 	}
 	
+	Class.prototype.log = function(message) {
+		if(this._logger) {
+			this._logger(message);
+		}
+	}
+	
+	Class.prototype.logTo = function(callback) {
+		this._logger = callback;
+	}
+	
 	return Class;
 	
 })();
 
+if(!module.exports) module.exports = {};
+module.exports.FirebaseDaemon = FirebaseDaemon;
