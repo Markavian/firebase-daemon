@@ -64,13 +64,15 @@ module.exports = function(grunt) {
       grunt.log.write('Server started on ' + server_url + ', end this process to stop.\n');
 
       /* Kill the server process after a period of time */
-      grunt.log.write("Server in debug mode, will automatically shut down in 30 seconds.\n")
-      setTimeout(function(end) {
-        grunt.log.write("Server thread stopping.");
-        end();
-      }, 30000, thread)
+	  if(grunt.option("debug")) {
+		  grunt.log.write("Server in debug mode, will automatically shut down in 30 seconds.\n")
+		  setTimeout(function(end) {
+			grunt.log.write("Server thread stopping.");
+			end();
+		  }, 30000, thread)
+	  };
       
-	  });
+	});
 	  
   });
 
