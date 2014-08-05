@@ -12,7 +12,7 @@ describe("Application Server", function() {
 	describe("constructor()", function() {
 		it("should be initialised with the expected values", function() {
 			expect(application.hits).toEqual(0);
-			expect(application.log).toEqual([]);
+			expect(application._log).toEqual([]);
 			expect(application.routes).toEqual({});
 		});
 	});
@@ -23,7 +23,7 @@ describe("Application Server", function() {
 		});
 		
 		it("should log a message about the server starting up", function() {
-			expect(application.log[0]).toContain("Server started");
+			expect(application._log[0]).toContain("Server started");
 		});
 		
 		it("should store a reference to the url parser", function() {
@@ -38,9 +38,24 @@ describe("Application Server", function() {
 			expect(application.routes['/']).toBe(application.responseMain);
 			expect(application.routes['/favicon.png']).toBe(application.response404);
 		});
+	});
+	
+	describe("log()", function() {
 		
-		it("should create a firebase daemon", function() {
-			
+		var expectedMessage = "I'm logging stuff: ";
+		
+		beforeEach(function() {
+			for(var i=0; i<5; i++) {
+				application.log(expectedMessage + " " + i);
+			}
+		});
+		
+		it("should store log messages sent to the application", function() {
+			expect(application._log[0]).toContain(expectedMessage + " 0");
+			expect(application._log[1]).toContain(expectedMessage + " 1");
+			expect(application._log[2]).toContain(expectedMessage + " 2");
+			expect(application._log[3]).toContain(expectedMessage + " 3");
+			expect(application._log[4]).toContain(expectedMessage + " 4");
 		});
 	});
 });

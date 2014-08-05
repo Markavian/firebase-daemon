@@ -5,21 +5,21 @@ var Application = (function() {
   var Class = function () {
     self = this;
     self.hits = 0;
-    self.log = [];
+    self._log = [];
 	self.routes = {};
 	self.url = null;
 	self.daemon = null;
   }
   
   Class.prototype.init = function (http, url) {
-    self.log.push('Server started ' + new Date());
+    self.log('Server started ' + new Date());
 	self.url = url;
     self.registerDefaultRoutes(http);
-    self.createDaemon();
   }
   
   Class.prototype.registerDefaultRoutes = function (http) {
 	self.routes['/'] = self.responseMain;
+	self.routes['/status'] = self.responseStatus;
 	self.routes['/favicon.png'] = self.response404;
 	
     self.server = http.createServer(self.handleRequest);
@@ -27,7 +27,7 @@ var Application = (function() {
   
   Class.prototype.handleRequest = function (req, res) {
 	self.hits++;
-	self.log.push('Service status hit ' + self.hits + ' times, last from ' + req.url);
+	self.log('Service status hit ' + self.hits + ' times, last from ' + req.url);
 
 	var path = self.url.parse(req.url).pathname;
 
@@ -41,8 +41,19 @@ var Application = (function() {
   }
 
   Class.prototype.responseMain = function (req, res) {
+    res.writeHead(301, {
+	  'Content-Type': 'text/plain',
+	  'Location': 'status'
+	});
+	res.write("Application running, redirecting to status page...\n");
+    res.end();
+  }
+  
+  Class.prototype.responseStatus = function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.write(self.log.join('\n'));
+	res.write("Application status: \n");
+	res.write("=================== \n");
+    res.write(self._log.join('\n'));
     res.end();
   }
 
@@ -52,9 +63,8 @@ var Application = (function() {
     res.end();
   }
 
-  Class.prototype.createDaemon = function () {
-    self.log.push('Creating firebase daemon ' + self.hits);
-    self.daemon = new FirebaseDaemon();
+  Class.prototype.log = function (message) {
+    self._log.push(message);
   }
   
   return Class;
