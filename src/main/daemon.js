@@ -12,9 +12,9 @@ var FirebaseDaemon = (function() {
 	}
 	
 	Class.prototype.errors = {
-		"A" : "Invalid config: no path set",
-		"B" : "Invalid config: no matcher set",
-		"C" : "Invalid config: no targets set"
+		NO_PATH : "Invalid config: no path set",
+		NO_MATCHER : "Invalid config: no matcher set",
+		NO_TARGETS : "Invalid config: no targets set"
 	}
 	
 	Class.prototype.report = function() {
@@ -24,9 +24,9 @@ var FirebaseDaemon = (function() {
 	};
 	
 	Class.prototype.addConfig = function(config) {
-		if(!config.path) throw new Error(this.errors.A);
-		if(!config.matcher) throw new Error(this.errors.B);
-		if(!config.targets && !(config.targets instanceof Array)) throw new Error(this.errors.C);
+		if(!config.path) throw new Error(this.errors.NO_PATH);
+		if(!config.matcher) throw new Error(this.errors.NO_MATCHER);
+		if(!config.targets && !(config.targets instanceof Array)) throw new Error(this.errors.NO_TARGETS);
 		
 		this._configs.push(config);
 	}
