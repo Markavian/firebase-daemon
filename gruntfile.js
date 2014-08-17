@@ -43,9 +43,9 @@ module.exports = function(grunt) {
   grunt.registerTask('server', 'Start application as web server', function() {
 	
     /* Environment variables */
-	var server_port = process.env.FIREBASEDAEMON_NODEJS_PORT || 3000;
+	  var server_port = grunt.option('server-port') || 3000;
     var server_ip_address = process.env.FIREBASEDAEMON_NODEJS_IP || '';
-	var firebase_root = process.env.FIREBASEDAEMON_FIREBASE_ROOT || 'https://burning-fire-3352.firebaseio.com/';
+	  var firebase_root = process.env.FIREBASEDAEMON_FIREBASE_ROOT || 'https://burning-fire-3352.firebaseio.com/';
     
     /* External require dependencies */
     var http = require('http');
